@@ -1,0 +1,129 @@
+# PROBLEM STATEMENT — GOOGLE PHOTOS AI-NATIVE RETRIEVAL MVP
+
+## PRODUCT OUTCOME 
+Increase the percentage of users who successfully retrieve a photo they remember but cannot precisely describe when they start searching.
+
+## NORTH STAR 
+**Successful Retrieval Rate of Vaguely Remembered Photos**
+
+## TARGET USER SEGMENT 
+**SEG-T — Effortful-path retrievers (404 / 800 = 50.5%)**
+
+Users who expect a specific photo to exist, remember it imprecisely, and continue putting effort into retrieval through strategy switching, repeated attempts, or manual candidate inspection.
+
+## RETRIEVAL SCENARIO 
+The user knows a specific photo exists but does not remember a precise identifier such as an exact date, filename, location, name, or search keyword.
+
+> **Examples:**
+> - “I’m looking for that photo from our Goa trip where we were at a beach café around sunset with my cousin.”
+> - "The houseboat trip we took in Kerala with family."
+> - "Hiking in the monsoon near Maharashtra mountains."
+> - "Late night beach party with friends in Goa."
+> - (The MVP includes 6 total pre-defined memory scenarios encompassing coastal/nature travel).
+
+The user may remember people, places, activities, visual appearance, events/context, or approximate time, while lacking precise dates, names, keywords, or locations.
+
+## CORE PROBLEM 
+Users trying to retrieve a specific photo from contextual but imprecise memory struggle to translate what they remember into effective retrieval cues and to progress when an initial retrieval attempt does not resolve the photo.
+
+## ROOT-CAUSE HYPOTHESIS 
+Users’ contextual memory is richer than the retrieval cues they can effectively express and refine.
+*This remains a hypothesis to validate through MVP usability testing.*
+
+## DISCOVERY SIGNALS — SEG-T 
+- **112** lack a precise identifier 
+- **90** lack time precision 
+- **74** lack an exact name 
+- **178** mention browsing 
+- **147** show uncertainty among candidates 
+- **94** mention large candidate sets 
+- **133** show repeated attempts 
+- **67** show strategy switching
+
+## RETRIEVAL JOURNEY 
+`Remember` → `Express` → `Discover` → `Narrow` → `Recover`
+
+```text
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  1. REMEMBER│ →  │ 2. EXPRESS  │ →  │ 3. DISCOVER │ →  │  4. NARROW  │ →  │  5. RECOVER │
+│             │    │             │    │             │    │             │    │             │
+│ "Goa trip,  │    │ Goa         │    │ 24 possible │    │ "Around     │    │ ✓ That's    │
+│ beach café  │    │ Cousin      │    │ matches     │    │ sunset"     │    │   the photo │
+│ at sunset   │    │ Beach café  │    │             │    │             │    │             │
+│ with cousin"│    │ Sunset      │    │ Ranked by   │    │ Same Goa    │    │             │
+│             │    │ Trip        │    │ relevance   │    │ trip        │    │             │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+*Available is a precondition: the intended photo is expected to exist in the searchable library.*
+
+---
+
+# SLIDE 8 — MVP + USER TESTING: Adaptive Memory-Based Retrieval
+
+V1 turns contextual memory into an adaptive retrieval loop; testing determines what the system should do next.
+
+`Problem` → `V1 MVP` → `Real retrieval task` → `User testing` → `Learning` → `V2`
+
+### 1. MVP DEFINITION: Adaptive Memory Retrieval
+A functional retrieval workflow that allows a user to describe a vaguely remembered photo and progressively refine the search without having to invent precise keywords.
+
+**Core MVP Capabilities:**
+- **Memory Input:** User describes what they remember naturally (e.g., *“Find the photo from my Goa trip where my cousin and I were sitting at a beach café around sunset.”* or *"The houseboat trip we took in Kerala"*). The system extracts context (People, Place, Activity, Appearance, Approx. time).
+- **Contextual Candidate Retrieval:** The system converts those clues into retrieval signals and presents plausible candidates. Instead of `Search → one query → results`, the MVP creates `Memory → interpreted context → candidate set`.
+- **Recognition Layer:** When multiple plausible photos appear, the system provides contextual filters (People | Place | Date | Activity | Visual context). The user can narrow the candidate set without reconstructing the search from scratch.
+- **Guided Recovery:** If the user says "None of these," the system does not send them back to an empty search box. It suggests targeted next steps (e.g., Try adding a person, Search around the trip dates, Show beach/café photos, Browse related locations).
+
+### 2. WHERE INTELLIGENCE IS ACTUALLY NEEDED
+Intelligence is concentrated in three places:
+- **EXPRESS:** Understand contextual memory and convert it into retrieval signals.
+- **DISCOVER / NARROW:** Combine multiple clues and identify useful candidate/filter relationships.
+- **RECOVER:** Infer what retrieval strategy to try next based on previous attempts.
+
+**Less intelligence required:**
+- **USER RECOGNITION:** The user remains the final judge of *"That's the photo I meant."* This is an important product principle.
+
+### 3. V1 USER TESTING
+Use 3 targeted usability tests matching the SEG-T behavioral profile.
+
+**Test Task:** Give each participant a realistic scenario: *“Find a specific photo that you know exists but cannot precisely describe. Use the MVP exactly as you normally would.”*
+Do not give them exact identifiers (filename, date, search keyword, album). The task should force the intended behavior: `Remember → Express → Discover → Narrow → Recover`.
+
+### 4. WHAT WE MEASURE (Behavioral Metrics connecting to Product Outcome)
+- **Retrieval success:** Did the user identify the intended photo?
+- **Time to retrieval:** How long until the intended photo is identified?
+- **Recovery rate:** % of failed first attempts that progress toward successful retrieval.
+- **Strategy switches:** How many times did the user need to change approach?
+- **Manual browsing:** How much timeline/candidate scrolling was required?
+- **Recognition confidence:** How confident was the user that they selected the intended photo?
+
+### 5. V1 → LEARNING → V2 (What Testing is Designed to Reveal)
+
+| V1 Feature | Test / Observation | Learning to Validate | V2 Direction |
+| --- | --- | --- | --- |
+| Natural-language memory input | Can users describe the photo naturally? | Which contextual clues are easiest/hardest for the system to interpret? | Improve context extraction |
+| Contextual candidate retrieval | Are returned candidates relevant enough? | Which combinations of clues produce useful candidates? | Improve candidate generation |
+| Dynamic candidate filters | Can users recognize the intended photo faster? | Which filters actually help recognition? | Personalize/filter dynamically |
+| Guided recovery | What do users do after the first attempt fails? | Which recovery suggestions actually help users progress? | Rank recovery actions based on context |
+
+### 6. THE MOST IMPORTANT V1 → V2 PRINCIPLE
+The MVP should not try to perfect every retrieval scenario. V1 should answer: **Can an adaptive retrieval loop reduce the effort required to retrieve a vaguely remembered photo?**
+
+V2 should then respond to actual observed failure points. For example:
+- If users say *"I don't know which of these filters matters,"* V2 automatically recommends the most relevant refinement.
+- If users repeatedly ignore recovery suggestions, V2 changes the recovery mechanism rather than adding more suggestions.
+- If contextual retrieval produces too many plausible candidates, V2 improves candidate ranking / recognition support.
+- If users successfully retrieve but spend too long inspecting results, V2 strengthens candidate filtering.
+
+---
+
+## SCOPE BOUNDARIES
+The MVP is **not**: A generic improvement to Google Photos Search, a generic chatbot, a new keyword-search interface, a collection of unrelated filters, a full production-scale Google Photos replacement, or proof that the root-cause hypothesis is causally validated.
+
+The MVP exists to test whether adaptive, memory-based retrieval helps SEG-T users progress from contextual memory to successful photo retrieval.
+
+## TESTING STATUS
+Any usability results, participant observations, percentages, quotes, or V1→V2 learnings must be explicitly labelled as simulated unless they come from actual user testing.
+
+## FINAL MVP QUESTION
+**Can an AI-native retrieval workflow help a user retrieve a specific photo from contextual but imprecise memory without requiring the user to know the exact search terms beforehand?**
